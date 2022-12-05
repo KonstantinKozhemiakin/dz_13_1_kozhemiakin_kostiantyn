@@ -180,30 +180,43 @@ def heap_sort(nums):
         heapify(nums, i, 0)
 
 
-def measure(my_list, iteration, function):
+def generate_list(len_list, type_of_list, rand_start, rand_finish):
+    if type_of_list == 'int':
+        int_list = []
+        for j in range(len_list):
+            int_list.append(random.randint(rand_start, rand_finish))
+        return int_list
+    if type_of_list == 'float':
+        float_list = []
+        for j in range(len_list):
+            float_list.append(random.uniform(rand_start, rand_finish))
+        return float_list
+    if type_of_list == 'words':
+        str_list = []
+        w = RandomWords()
+        for j in range(len_list):
+            str_list.append(w.random_word())
+        return str_list
+
+
+def measure(function, iteration, len_list, type_of_list, rand_start=0, rand_finish=1000):
     time_of_done = []
     for i in range(iteration):
+        my_list = generate_list(len_list, type_of_list, rand_start, rand_finish)
         time_start = time.time()
         function(my_list)
-        time_of_done.append(time_start-time.time())
-    return sum(time_of_done)/len(time_of_done)
+        time_of_done.append(time.time() - time_start)
+    return sum(time_of_done) / len(time_of_done)
 
 
-
-
-int_list = []
-float_list = []
-str_list = []
-
-w = RandomWords()
-
-for i in range(0, 5000):
-    int_list.append(random.randint(0, 1000))
-    float_list.append(random.uniform(0.1, 100.0))
-    str_list.append(w.random_word())
-
-
-print(measure(int_list,5,insertion_sort))
-# print("Int List:", int_list)
-# print("Float List:", float_list)
-# print("String List:", str_list)
+my_sort_func = [bubble_sort, selection_sort, insertion_sort, merge_sort, quick_sort, heap_sort]
+test_iteration = 5
+test_len = 500
+print(f"Test iteration : {test_iteration}\nTest length: {test_len}")
+print(r"int    float  words  type")
+for i in range(0, len(my_sort_func)):
+    print(
+        f"{measure(my_sort_func[i], iteration=test_iteration, len_list=test_len, type_of_list='int', rand_start=0, rand_finish=1000):.4f} "
+        f"{measure(my_sort_func[i], iteration=test_iteration, len_list=test_len, type_of_list='float', rand_start=0.1, rand_finish=100.0):.4f} "
+        f"{measure(my_sort_func[i], iteration=test_iteration, len_list=test_len, type_of_list='words'):.4f} "
+        f"{my_sort_func[i].__name__}: ")
